@@ -40,9 +40,9 @@ function process(data) {
 }
 
 function forecast(countryName) {
-    var key = "1544085b4f6144eebb085843240312"; // Your WeatherAPI key
+    var key = "0d8f178bc3ec66ad6f5287f8e9644859"; // Your OpenWeatherMap API key
 
-    var url = `https://api.weatherapi.com/v1/forecast.json?key=${key}&q=${countryName}&days=1&aqi=no&alerts=no`;
+    var url = `https://api.openweathermap.org/data/2.5/weather?q=${countryName}&appid=${key}&units=metric`;
 
     document.getElementById("displayArea1").innerHTML = `<p>Loading weather data...</p>`;
 
@@ -58,14 +58,19 @@ function process_forecast(data) {
     var oldContent = document.getElementById("displayArea1");
     oldContent.textContent = "";
 
+    if (data.cod !== 200) {
+        oldContent.innerHTML = `<p class="text-danger">Weather data not found for this country!</p>`;
+        return;
+    }
+
     var newDiv = document.createElement("div");
     newDiv.innerHTML = `
-        <h2>Weather in ${data.location.name}</h2>
-        <p><strong>Date:</strong> ${data.forecast.forecastday[0].date}</p>
-        <p><strong>Max Temp:</strong> ${data.forecast.forecastday[0].day.maxtemp_c} °C</p>
-        <p><strong>Min Temp:</strong> ${data.forecast.forecastday[0].day.mintemp_c} °C</p>
-        <p><strong>Condition:</strong> ${data.forecast.forecastday[0].day.condition.text}</p>
-        <img src="https:${data.forecast.forecastday[0].day.condition.icon}" alt="Weather Icon">
+        <h2>Weather in ${data.name}</h2>
+        <p><strong>Temperature:</strong> ${data.main.temp} °C</p>
+        <p><strong>Min Temp:</strong> ${data.main.temp_min} °C</p>
+        <p><strong>Max Temp:</strong> ${data.main.temp_max} °C</p>
+        <p><strong>Condition:</strong> ${data.weather[0].description}</p>
+        <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon">
     `;
 
     oldContent.appendChild(newDiv);
